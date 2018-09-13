@@ -1,6 +1,7 @@
 package com.ylweather.fragment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,7 +15,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ylweather.MainActivity;
 import com.ylweather.R;
+import com.ylweather.WeatherActivity;
 import com.ylweather.db.City;
 import com.ylweather.db.Country;
 import com.ylweather.db.Province;
@@ -76,6 +79,20 @@ public class ChooseAreaFragment extends Fragment {
                 }else if(currentLevel==LEVEL_CITY){
                     selectedCity=cityList.get(position);
                     queryCountries();
+                }else if(currentLevel==LEVEL_COUNTRY){
+                    String weatherId = countryList.get(position).getWeatherId();
+                    if(getActivity() instanceof MainActivity){
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_id",weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }else if(getActivity() instanceof WeatherActivity){
+                        WeatherActivity weatherActivity = (WeatherActivity)getActivity();
+                        weatherActivity.drawerLayout.closeDrawers();
+                        weatherActivity.refreshLayout.setRefreshing(true);
+                        weatherActivity.requestWeather(weatherId);
+                    }
+
                 }
             }
         });
